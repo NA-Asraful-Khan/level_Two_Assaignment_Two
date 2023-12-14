@@ -8,13 +8,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserControllers = void 0;
-const student_service_1 = require("./student.service");
+const user_service_1 = require("./user.service");
+const user_validation_1 = __importDefault(require("./user.validation"));
+const order_validation_1 = __importDefault(require("./order.validation"));
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = req.body;
-        const result = yield student_service_1.UserServices.createUserIntoDB(user);
+        const zodParsedData = user_validation_1.default.parse(user);
+        const result = yield user_service_1.UserServices.createUserIntoDB(zodParsedData);
         res.status(200).json({
             success: true,
             message: 'User created successfully!',
@@ -31,7 +37,7 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 const getAllUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const result = yield student_service_1.UserServices.getAllUserFromDB();
+        const result = yield user_service_1.UserServices.getAllUserFromDB();
         res.status(200).json({
             success: true,
             message: 'Users fetched successfully!',
@@ -49,7 +55,7 @@ const getAllUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 const getSingleUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userId = parseInt(req.params.userId);
-        const result = yield student_service_1.UserServices.getSingleUserFromDB(userId);
+        const result = yield user_service_1.UserServices.getSingleUserFromDB(userId);
         res.status(200).json({
             success: true,
             message: 'User Fetched successfully!',
@@ -67,8 +73,9 @@ const getSingleUser = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newUser = req.body;
+        const zodParsedData = user_validation_1.default.parse(newUser);
         const userId = parseInt(req.params.userId);
-        const result = yield student_service_1.UserServices.updateSingleUserFromDB(newUser, userId);
+        const result = yield user_service_1.UserServices.updateSingleUserFromDB(zodParsedData, userId);
         res.status(200).json({
             success: true,
             message: 'User updated successfully!',
@@ -86,7 +93,7 @@ const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userId = parseInt(req.params.userId);
-        const result = yield student_service_1.UserServices.deleteSingleUserFromDB(userId);
+        const result = yield user_service_1.UserServices.deleteSingleUserFromDB(userId);
         res.status(200).json({
             success: true,
             message: 'User Deleted successfully!',
@@ -104,8 +111,9 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 const newOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newOrder = req.body;
+        const zodParsedData = order_validation_1.default.parse(newOrder);
         const userId = parseInt(req.params.userId);
-        yield student_service_1.UserServices.addNewOrderInUser(newOrder, userId);
+        yield user_service_1.UserServices.addNewOrderInUser(zodParsedData, userId);
         res.status(200).json({
             success: true,
             message: 'Order created successfully!',
@@ -123,7 +131,7 @@ const newOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 const getOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userId = parseInt(req.params.userId);
-        const result = yield student_service_1.UserServices.getAllOrder(userId);
+        const result = yield user_service_1.UserServices.getAllOrder(userId);
         const orders = { orders: result };
         res.status(200).json({
             success: true,
@@ -142,7 +150,7 @@ const getOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 const calculateOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userId = parseInt(req.params.userId);
-        const result = yield student_service_1.UserServices.calculateOrderPrice(userId);
+        const result = yield user_service_1.UserServices.calculateOrderPrice(userId);
         const total = { totalPrice: result };
         res.status(200).json({
             success: true,

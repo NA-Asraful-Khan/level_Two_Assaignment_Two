@@ -1,11 +1,16 @@
 import { Request, Response } from 'express';
-import { UserServices } from './student.service';
+import { UserServices } from './user.service';
+import { z } from "zod";
+import userValidationSchema from './user.validation';
+import orderValidationSchema from './order.validation';
 
 const createUser = async (req: Request, res: Response) => {
   try {
     const user = req.body;
+    const zodParsedData= userValidationSchema.parse(user)
+    
 
-    const result = await UserServices.createUserIntoDB(user);
+    const result = await UserServices.createUserIntoDB(zodParsedData);
 
     res.status(200).json({
       success: true,
@@ -59,9 +64,10 @@ const getSingleUser = async (req: Request, res: Response) => {
 const updateUser = async (req: Request, res: Response) => {
   try {
     const newUser = req.body;
+    const zodParsedData= userValidationSchema.parse(newUser)
     const userId = parseInt(req.params.userId);
 
-    const result = await UserServices.updateSingleUserFromDB(newUser, userId);
+    const result = await UserServices.updateSingleUserFromDB(zodParsedData, userId);
 
     res.status(200).json({
       success: true,
@@ -99,9 +105,10 @@ const deleteUser = async (req: Request, res: Response) => {
 const newOrder = async (req: Request, res: Response) => {
   try {
     const newOrder = req.body;
+    const zodParsedData= orderValidationSchema.parse(newOrder)
     const userId = parseInt(req.params.userId);
 
-    await UserServices.addNewOrderInUser(newOrder, userId);
+    await UserServices.addNewOrderInUser(zodParsedData, userId);
 
     res.status(200).json({
       success: true,

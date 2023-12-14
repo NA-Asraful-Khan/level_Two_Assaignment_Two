@@ -11,11 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserModel = void 0;
 const mongoose_1 = require("mongoose");
-const orderSchema = new mongoose_1.Schema({
-    productName: { type: String },
-    price: { type: Number },
-    quantity: { type: Number },
-});
 const userSchema = new mongoose_1.Schema({
     userId: { type: Number, unique: true, required: true },
     username: { type: String, unique: true, required: true },

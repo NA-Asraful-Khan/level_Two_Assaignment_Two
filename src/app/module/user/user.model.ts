@@ -1,11 +1,6 @@
 import { Schema, model } from 'mongoose';
-import { Torders, UserInstanceModel, UserInterface } from './user.interface';
+import { UserInstanceModel, UserInterface } from './user.interface';
 
-const orderSchema = new Schema<Torders>({
-  productName: { type: String },
-  price: { type: Number },
-  quantity: { type: Number },
-});
 
 const userSchema = new Schema<UserInterface, UserInstanceModel>({
   userId: { type: Number, unique: true, required: true },
