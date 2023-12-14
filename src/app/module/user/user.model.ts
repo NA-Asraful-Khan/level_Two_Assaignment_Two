@@ -1,5 +1,11 @@
 import { Schema, model } from 'mongoose';
-import { UserInstanceModel, UserInterface,  } from './user.interface';
+import { Torders, UserInstanceModel, UserInterface,  } from './user.interface';
+
+const orderSchema = new Schema <Torders>({
+    productName: {type:String},
+    price: {type:Number},
+    quantity: {type:Number}
+})
 
 
 const userSchema = new Schema<UserInterface,UserInstanceModel>({
@@ -19,13 +25,11 @@ const userSchema = new Schema<UserInterface,UserInstanceModel>({
         city: {type:String},
         country: {type:String}
     },
-    orders:[
-        {
-            productName: {type:String},
-            price: {type:Number},
-            quantity: {type:Number}
-        }
-    ]
+    orders:[{
+        productName: {type:String},
+        price: {type:Number},
+        quantity: {type:Number}
+    }]
   });
 
   userSchema.methods.toJSON = function () {

@@ -1,4 +1,4 @@
-import { UserInterface } from "./user.interface";
+import { Torders, UserInterface } from "./user.interface";
 import { UserModel } from "./user.model";
 
 const createUserIntoDB = async (userData:UserInterface)=>{
@@ -49,10 +49,53 @@ const deleteSingleUserFromDB = async(userId:number)=>{
     
 }
 
+
+
+const addNewOrderInUser= async (orderData:Torders,userId:number)=>{
+
+    if(await UserModel.isUserExists(userId)){
+        const result = await UserModel.findOneAndUpdate({userId},{ $push: { orders: orderData } },{ new: true}).lean();
+        return result
+    }else{
+        throw new Error('User Not Found!')
+    }
+}
+
+
+const getAllOrder= async(userId:number)=>{
+    if(await UserModel.isUserExists(userId)){
+        const result = await UserModel.findOne({userId}).lean();
+        const allOrders = result?.orders || [];
+        return allOrders;
+        
+    }else{
+        throw new Error('User Do not Exists!')
+    }
+    
+}
+
+const calculateOrderPrice= async(userId:number)=>{
+    if(await UserModel.isUserExists(userId)){
+        const result = await UserModel.findOne({userId}).lean();
+        const allOrders = result?.orders || [];
+        const totalPrice = allOrders.reduce((acc, order) => {
+            return acc + order.price * order.quantity;
+          }, 0);
+        return totalPrice;
+        
+    }else{
+        throw new Error('User Do not Exists!')
+    }
+    
+}
+
 export const UserServices ={
     createUserIntoDB,
     getAllUserFromDB,
     getSingleUserFromDB,
     updateSingleUserFromDB,
-    deleteSingleUserFromDB
+    deleteSingleUserFromDB,
+    addNewOrderInUser,
+    getAllOrder,
+    calculateOrderPrice
 }

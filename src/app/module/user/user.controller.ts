@@ -100,11 +100,77 @@ const deleteUser = async(req:Request,res:Response)=>{
     }
 }
 
+const newOrder = async(req:Request,res:Response)=>{
+    try{
+        const newOrder = req.body
+        const userId = parseInt(req.params.userId);
+
+        await UserServices.addNewOrderInUser(newOrder,userId)
+
+        res.status(200).json({
+            success: true,
+            message: "Order created successfully!",
+            data: null
+        })
+    
+        
+    }catch(err:any){
+        res.status(500).json({
+            success: false,
+            message: err.message||"Failed to Insert Order!",
+            data: err
+        })
+    }
+}
+
+const getOrders= async(req:Request, res:Response)=>{
+    try{
+        const userId = parseInt(req.params.userId);
+        const result = await UserServices.getAllOrder(userId)
+        const orders ={orders:result}
+        res.status(200).json({
+            success: true,
+            message: "Orders Fetched successfully!",
+            data: orders
+        })
+    }catch(err:any){
+        res.status(500).json({
+            success: false,
+            message: err.message||"Failed to fetch Orders!",
+            data: err
+        })
+    }
+}
+
+const calculateOrder= async(req:Request, res:Response)=>{
+    try{
+        const userId = parseInt(req.params.userId);
+        const result = await UserServices.calculateOrderPrice(userId)
+        const total ={totalPrice:result}
+        res.status(200).json({
+            success: true,
+            message: "Orders Fetched successfully!",
+            data: total
+        })
+    }catch(err:any){
+        res.status(500).json({
+            success: false,
+            message: err.message||"Failed to fetch Orders!",
+            data: err
+        })
+    }
+}
+
+
+
 
 export const UserControllers ={
     createUser,
     getAllUser,
     getSingleUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    newOrder,
+    getOrders,
+    calculateOrder
 }
