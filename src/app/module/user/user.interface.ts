@@ -28,13 +28,7 @@ export type UserInterface = {
     orders: Torders[]
 }
 
-
-export type UserMethods ={
+export interface UserInstanceModel extends Model<UserInterface> {
     isUserExists(userId:number):Promise<UserInterface | null>;
-}
+  }
 
-export type UserInstanceModel = Model<
-    UserInterface,
-    Record<string,never>,
-    UserMethods
->;

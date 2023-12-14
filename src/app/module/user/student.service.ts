@@ -2,15 +2,12 @@ import { UserInterface } from "./user.interface";
 import { UserModel } from "./user.model";
 
 const createUserIntoDB = async (userData:UserInterface)=>{
-    // const result = await UserModel.insertMany(user);
 
-    const user = new UserModel(userData)
-
-    if(await user.isUserExists(userData.userId)){
-        throw new Error('User Already Exists!')
+    if(await UserModel.isUserExists(userData.userId)){
+        throw new Error('User already exists!')
     }
 
-    const result = await user.save()
+    const result = await UserModel.insertMany(userData);
 
     return result;
 }
@@ -21,18 +18,35 @@ const getAllUserFromDB = async()=>{
 }
 
 const getSingleUserFromDB = async(userId:number)=>{
-    const result = await UserModel.findOne({userId},{_id:0,password:0,orders:0}).lean();
-    return result;
+    if(await UserModel.isUserExists(userId)){
+        const result = await UserModel.findOne({userId},{_id:0,password:0,orders:0}).lean();
+        return result;
+    }else{
+        throw new Error('User Do not Exists!')
+    }
+    
 }
 
 const updateSingleUserFromDB = async(user:UserInterface,userId:number)=>{
-    const result = await UserModel.findOneAndUpdate({userId},user,{ new: true, select: { password: 0, _id: 0,orders:0 } }).lean();
-    return result
+    if(await UserModel.isUserExists(userId)){
+        const result = await UserModel.findOneAndUpdate({userId},user,{ new: true, select: { password: 0, _id: 0,orders:0 } }).lean();
+        return result
+    }else{
+        throw new Error('User Not Found!')
+    }
+    
+    
 }
 
 const deleteSingleUserFromDB = async(userId:number)=>{
-    const result = await UserModel.deleteOne({userId}).select('-password');
+
+    if(await UserModel.isUserExists(userId)){
+        const result = await UserModel.deleteOne({userId}).select('-password');
     return result
+    }else{
+        throw new Error('User Not Found!')
+    }
+    
 }
 
 export const UserServices ={
