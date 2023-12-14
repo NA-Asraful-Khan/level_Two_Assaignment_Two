@@ -1,8 +1,16 @@
 import { UserInterface } from "./user.interface";
 import { UserModel } from "./user.model";
 
-const createUserIntoDB = async (user:UserInterface)=>{
-    const result = await UserModel.insertMany(user);
+const createUserIntoDB = async (userData:UserInterface)=>{
+    // const result = await UserModel.insertMany(user);
+
+    const user = new UserModel(userData)
+
+    if(await user.isUserExists(userData.userId)){
+        throw new Error('User Already Exists!')
+    }
+
+    const result = await user.save()
 
     return result;
 }
@@ -18,7 +26,12 @@ const getSingleUserFromDB = async(userId:number)=>{
 }
 
 const updateSingleUserFromDB = async(user:UserInterface,userId:number)=>{
-    const result = await UserModel.findOneAndUpdate({userId},user,{ new: true }).select('-password');
+    const result = await UserModel.findOneAndUpdate({userId},user,{ new: true, select: { password: 0, _id: 0,orders:0 } }).lean();
+    return result
+}
+
+const deleteSingleUserFromDB = async(userId:number)=>{
+    const result = await UserModel.deleteOne({userId}).select('-password');
     return result
 }
 
@@ -26,5 +39,6 @@ export const UserServices ={
     createUserIntoDB,
     getAllUserFromDB,
     getSingleUserFromDB,
-    updateSingleUserFromDB
+    updateSingleUserFromDB,
+    deleteSingleUserFromDB
 }

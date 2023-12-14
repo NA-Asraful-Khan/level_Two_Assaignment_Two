@@ -1,8 +1,8 @@
 import { Schema, model } from 'mongoose';
-import { UserInterface } from './user.interface';
+import { UserInstanceModel, UserInterface, UserMethods } from './user.interface';
 
 
-const userSchema = new Schema<UserInterface>({
+const userSchema = new Schema<UserInterface,UserInstanceModel,UserMethods>({
     userId: {type:Number,unique: true, required:true},
     username:{type:String,unique: true, required:true},
     password: {type:String, required:true},
@@ -28,4 +28,17 @@ const userSchema = new Schema<UserInterface>({
     ]
   });
 
-  export const UserModel = model<UserInterface>('UserModel', userSchema)
+  userSchema.methods.toJSON = function () {
+    const userObject = this.toObject();
+    delete userObject.password;
+    delete userObject._id;
+    delete userObject.orders;
+    return userObject;
+  };
+
+  userSchema.methods.isUserExists= async function(userId:number){
+    const existingUser = await UserModel.findOne({userId})
+    return existingUser
+  }
+
+  export const UserModel = model<UserInterface, UserInstanceModel>('UserModel', userSchema)

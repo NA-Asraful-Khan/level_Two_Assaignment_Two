@@ -1,10 +1,11 @@
+import { Model } from "mongoose"
 
-export type FullNameType={
+export type TfullNameType={
     firstName: string,
     lastName: string
 }
 
-export type  Orders= {
+export type  Torders= {
     productName: string,
     price: number,
     quantity: number
@@ -14,7 +15,7 @@ export type UserInterface = {
     userId: number,
     username: string,
     password: string,
-    fullName: FullNameType,
+    fullName: TfullNameType,
     age: number,
     email: string,
     isActive: boolean,
@@ -24,5 +25,16 @@ export type UserInterface = {
         city: string,
         country: string
     },
-    orders: Orders[]
+    orders: Torders[]
 }
+
+
+export type UserMethods ={
+    isUserExists(userId:number):Promise<UserInterface | null>;
+}
+
+export type UserInstanceModel = Model<
+    UserInterface,
+    Record<string,never>,
+    UserMethods
+>;
